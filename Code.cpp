@@ -39,6 +39,7 @@ float Math(stack <float>& stackOut, char sign, float s1, float s2) {
 //Проверки
 void Check(string& in) {
 	int cIn = 0, cOp = 0, cCl = 0, cNum = 0, cSig = 0;
+	char sign = '.';
 	while (in[cIn] != '\0') {
 		if (in[cIn] == '(') {
 			cOp++;
@@ -50,13 +51,18 @@ void Check(string& in) {
 			cIn++;
 		}
 		else if (in[cIn] == '+' || in[cIn] == '-' || in[cIn] == '*' || in[cIn] == '/') {
+			if (in[cIn + 1] == ' ') {
+				sign = in[cIn];
+				while (in[cIn + 1] == ' ') cIn++;
+			}
 			if (in[cIn + 1] == '+' || in[cIn + 1] == '-' || in[cIn + 1] == '*' || in[cIn + 1] == '/') throw exception();
-			if (in[cIn] == '/' && in[cIn + 1] == '0') throw '0';
+			if ((in[cIn] == '/' || sign == '/') && in[cIn + 1] == '0') throw '0';
 			cIn++;
 			cSig++;
 		}
 		else if (in[cIn] >= 'a' && in[cIn] <= 'z') {
-			if (in[cIn] >= 'a' && in[cIn] <= 'z') throw exception();
+			if (in[cIn + 1] == ' ') while (in[cIn + 1] == ' ') cIn++;
+			if ((in[cIn+1] >= 'a' && in[cIn+1] <= 'z') || (in[cIn] >= '0' && in[cIn] <= '9')) throw exception();
 			cIn++;
 			cNum++;
 		}
@@ -66,6 +72,8 @@ void Check(string& in) {
 				cIn++;
 			}
 			cNum++;
+			if (in[cIn] == ' ') while (in[cIn] == ' ') cIn++;
+			if (in[cIn] >= '0' && in[cIn] <= '9') throw exception();
 		}
 		else cIn++;
 	}
@@ -74,6 +82,9 @@ void Check(string& in) {
 }
 void CheckPol(string& in) {
 	int cIn = 0, cNum = 0, cSig = 0;
+	for (; in[cIn] == ' '; cIn++);
+	if (in[cIn] == '+' || in[cIn] == '-' || in[cIn] == '*' || in[cIn] == '/') cIn = 0;
+	else throw exception();
 	for (; in[cIn] != '\0'; cIn++);
 	for (; in[cIn] == ' '; cIn--);
 	cIn--;
@@ -100,6 +111,9 @@ void CheckPol(string& in) {
 }
 void CheckRevPol(string& in) {
 	int cIn = 0, cNum = 0, cSig = 0;
+	for (; in[cIn] == ' '; cIn++);
+	if (in[cIn] == '+' || in[cIn] == '-' || in[cIn] == '*' || in[cIn] == '/') throw exception();
+	else cIn = 0;
 	for (; in[cIn] != '\0'; cIn++);
 	for (; in[cIn] == ' '; cIn--);
 	cIn--;
